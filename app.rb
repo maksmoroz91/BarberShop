@@ -4,7 +4,7 @@ require 'sinatra/reloader'
 require 'sqlite3'
 
 configure do
-	@db = SQLite3::Database.new 'barbershop.db'
+	@db = get_db
 	@db.execute 'CREATE TABLE IF NOT EXISTS
 		 "Users" 
 		 (
@@ -14,7 +14,7 @@ configure do
 		 	 "datestamp" TEXT,
 		 	 "barber" TEXT,
 		 	 "color" TEXT
-		 )'
+		 )' 
 end	
 
 get '/' do
@@ -48,12 +48,17 @@ post '/visit' do
 		end
 	end					
 
-	f = File.open './public/users.txt', 'a'
-	f.write "User: #{@username}, Phone: #{@phone}, Date and time: #{@datetime}, Barber: #{@barber}, Color: #{@color}\n"
-	f.close
+	@db = get_db
+	@db.execute 'insert into Users ( username, phone, datestamp, barber, color) 
+		values ( ?,?,?,?,?)', [@username, @phone, @datetime, @barber, @color]
 
 	erb "#{@username}, мы Вас записали!"
 end	
+
+def get_db
+	return SQLite3::Database.new 'barbershop.db'
+end	
+
 
 get '/contacts' do
 	erb :contacts
@@ -78,3 +83,4 @@ post '/contacts' do
 
 	erb "Собщение отпрвлено"
 end	
+
