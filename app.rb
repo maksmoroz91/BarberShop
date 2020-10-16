@@ -62,12 +62,8 @@ post '/visit' do
 end	
 
 get '/showusers' do
-  	@db = get_db
-	@db.execute 'select * from Users' do |row|
-		print row
-		puts ''
-		puts ''   	
-	end
+  	
+		
 end
 
 
