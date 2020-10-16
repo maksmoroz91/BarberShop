@@ -3,6 +3,12 @@ require 'sinatra'
 require 'sinatra/reloader' 
 require 'sqlite3'
 
+def get_db
+	@db = SQLite3::Database.new 'barbershop.db'
+	@db.results_as_hash = true
+	return @db
+end	
+
 configure do
 	@db = get_db
 	@db.execute 'CREATE TABLE IF NOT EXISTS
@@ -55,9 +61,14 @@ post '/visit' do
 	erb "#{@username}, мы Вас записали!"
 end	
 
-def get_db
-	return SQLite3::Database.new 'barbershop.db'
-end	
+get '/showusers' do
+  	@db = get_db
+	@db.execute 'select * from Users' do |row|
+		print row
+		puts ''
+		puts ''   	
+	end
+end
 
 
 get '/contacts' do
